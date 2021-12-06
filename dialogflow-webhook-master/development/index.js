@@ -11,7 +11,7 @@ const { info } = require("actions-on-google/dist/common");
 // const { response } = require("express");
 require('dotenv').config();
 let contador = 0
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 const ip = process.env.IP || "127.0.0.1";
 let followerList = "";
 // app.use(bodyParser.urlencoded({ extended: false }));
@@ -19,7 +19,7 @@ let followerList = "";
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.post('/',  async(req, res) => {
-
+    
     const agent = new WebhookClient({
         request: req,
         response: res
@@ -74,7 +74,7 @@ app.post('/',  async(req, res) => {
                             }
                         };
                         let original_query = query;
-                        let host = "localhost:8000"; // "https://zmartboard.cl"
+                        let host = "https://zmartboard.cl"; // "https://zmartboard.cl"
                         // information = "El contenido de la lección se encuentran en el siguiente link:\n"
                         information = `${host}/project/${proyecto}/lessons/${info[0].id}?q=${original_query}`
                         is_url = true;
@@ -189,7 +189,6 @@ app.post('/',  async(req, res) => {
 
         let texto = "";
         let place = 1;
-
         let user_id = 'cc7baf7c-839b-41ea-b791-a416a3b0ee92';
         try {
             user_id = req.body.originalDetectIntentRequest.payload.userId;
@@ -199,7 +198,6 @@ app.post('/',  async(req, res) => {
             });
             return response;
         }
-
         let data = await query_psql(
             "select up.user_id, up.project_id, u.id, u.name as username, p.name from public.user_joins_projects as up, public.users as u, public.projects as p where u.id = $1 and u.id = up.user_id and up.project_id = p.id AND up.deleted_at IS NULL",
             [user_id]
@@ -405,7 +403,7 @@ app.post('/',  async(req, res) => {
         //             }
         //         };
         //         let original_query = contexto.parameters.original_rec_query;
-        //         let host = "localhost:8000"; // "https://zmartboard.cl"
+        //         let host = "https://zmartboard.cl"; // "https://zmartboard.cl"
         //         return res.json({
         //             "outputContexts": newOutput,
         //             "fulfillmentMessages": [
@@ -507,7 +505,7 @@ app.post('/',  async(req, res) => {
                         }
                     };
                     let original_query = contexto.parameters.original_rec_query;
-                    let host = "localhost:8000"; // "https://zmartboard.cl"
+                    let host = "https://zmartboard.cl"; // "https://zmartboard.cl"
                     // information = "El contenido de la lección se encuentran en el siguiente link:\n"
                     information = `${host}/project/${proyecto}/lessons/${data_to_rec.id}?q=${original_query}`
                     is_url = true;
@@ -671,6 +669,73 @@ app.post('/',  async(req, res) => {
         }
         return response;
     }
+    if (req.body.queryResult.intent.displayName == 'Dates') {
+
+        let texto = "";
+        let user_id = 'cc7baf7c-839b-41ea-b791-a416a3b0ee92';
+        try {
+            user_id = req.body.originalDetectIntentRequest.payload.userId;
+        } catch (e) {
+            response = res.json({
+                "fulfillmentText": "No hay usuario"
+            });
+            return response;
+        }
+        let data = await query_psql(
+            "select * from public.chatbot_params",
+            // "select dates, team from public.chatbot_params",
+            [user_id]
+        );
+        
+        if (data != null && data.length > 0) {
+            projects = {}
+            data.forEach(chatbot_params => {
+                texto += `${chatbot_params.dates}\n`;
+            });
+            response = res.json({
+                "fulfillmentText": texto
+            });
+        } else {
+            response = res.json({
+                "fulfillmentText": "No hay fechas"
+            });
+        }
+        return response;
+    }
+    if (req.body.queryResult.intent.displayName == 'Team') {
+
+        let texto = "";
+        let user_id = 'cc7baf7c-839b-41ea-b791-a416a3b0ee92';
+        try {
+            user_id = req.body.originalDetectIntentRequest.payload.userId;
+        } catch (e) {
+            response = res.json({
+                "fulfillmentText": "No hay usuario"
+            });
+            return response;
+        }
+        let data = await query_psql(
+            "select * from public.chatbot_params",
+            // "select dates, team from public.chatbot_params",
+            [user_id]
+        );
+        
+        if (data != null && data.length > 0) {
+            projects = {}
+            data.forEach(chatbot_params => {
+                texto += `${chatbot_params.team}\n`;
+            });
+            response = res.json({
+                "fulfillmentText": texto
+            });
+        } else {
+            response = res.json({
+                "fulfillmentText": "No hay fechas"
+            });
+        }
+        return response;
+    }
+
 
 });
 

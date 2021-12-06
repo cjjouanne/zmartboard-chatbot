@@ -30,7 +30,6 @@ router.post('/dialogflow', async (req, res) => {
         request: req,
         response: res
     });
-    
     let response;
     if (req.body.queryResult.action == "full-test") {
         
@@ -553,6 +552,72 @@ router.post('/dialogflow', async (req, res) => {
                     "fulfillmentText": "No tenemos más respuestas, muchas gracias."
                 });
             }
+        }
+        return response;
+    }
+    if (req.body.queryResult.intent.displayName == 'Dates') {
+
+        let texto = "";
+        let user_id = 'cc7baf7c-839b-41ea-b791-a416a3b0ee92';
+        try {
+            user_id = req.body.originalDetectIntentRequest.payload.userId;
+        } catch (e) {
+            response = res.json({
+                "fulfillmentText": "No hay usuario"
+            });
+            return response;
+        }
+        let data = await query_psql(
+            "select * from public.chatbot_params",
+            // "select dates, team from public.chatbot_params",
+            [user_id]
+        );
+        
+        if (data != null && data.length > 0) {
+            projects = {}
+            data.forEach(chatbot_params => {
+                texto += `${chatbot_params.dates}\n`;
+            });
+            response = res.json({
+                "fulfillmentText": texto
+            });
+        } else {
+            response = res.json({
+                "fulfillmentText": "No hay fechas"
+            });
+        }
+        return response;
+    }
+    if (req.body.queryResult.intent.displayName == 'Team') {
+
+        let texto = "";
+        let user_id = 'cc7baf7c-839b-41ea-b791-a416a3b0ee92';
+        try {
+            user_id = req.body.originalDetectIntentRequest.payload.userId;
+        } catch (e) {
+            response = res.json({
+                "fulfillmentText": "No hay usuario"
+            });
+            return response;
+        }
+        let data = await query_psql(
+            "select * from public.chatbot_params",
+            // "select dates, team from public.chatbot_params",
+            [user_id]
+        );
+        
+        if (data != null && data.length > 0) {
+            projects = {}
+            data.forEach(chatbot_params => {
+                texto += `${chatbot_params.team}\n`;
+            });
+            response = res.json({
+                "fulfillmentText": texto
+            });
+        } else {
+            response = res.json({
+                "fulfillmentText": "No hay fechas"
+            });
         }
         return response;
     }
