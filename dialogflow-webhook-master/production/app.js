@@ -574,7 +574,6 @@ router.post('/dialogflow', async (req, res) => {
         );
         
         if (data != null && data.length > 0) {
-            projects = {}
             data.forEach(chatbot_params => {
                 texto += `${chatbot_params.dates}\n`;
             });
@@ -607,7 +606,6 @@ router.post('/dialogflow', async (req, res) => {
         );
         
         if (data != null && data.length > 0) {
-            projects = {}
             data.forEach(chatbot_params => {
                 texto += `${chatbot_params.team}\n`;
             });

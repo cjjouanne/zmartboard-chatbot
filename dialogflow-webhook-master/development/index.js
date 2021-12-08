@@ -688,7 +688,6 @@ app.post('/',  async(req, res) => {
         );
         
         if (data != null && data.length > 0) {
-            projects = {}
             data.forEach(chatbot_params => {
                 texto += `${chatbot_params.dates}\n`;
             });
@@ -721,7 +720,6 @@ app.post('/',  async(req, res) => {
         );
         
         if (data != null && data.length > 0) {
-            projects = {}
             data.forEach(chatbot_params => {
                 texto += `${chatbot_params.team}\n`;
             });
