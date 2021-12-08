@@ -669,7 +669,7 @@ app.post('/',  async(req, res) => {
         }
         return response;
     }
-    if (req.body.queryResult.intent.displayName == 'Dates') {
+    if (req.body.queryResult.intent.displayName == 'Entregas') {
 
         let texto = "";
         let user_id = 'cc7baf7c-839b-41ea-b791-a416a3b0ee92';
@@ -702,7 +702,7 @@ app.post('/',  async(req, res) => {
         }
         return response;
     }
-    if (req.body.queryResult.intent.displayName == 'Team') {
+    if (req.body.queryResult.intent.displayName == 'equipoDocente') {
 
         let texto = "";
         let user_id = 'cc7baf7c-839b-41ea-b791-a416a3b0ee92';
